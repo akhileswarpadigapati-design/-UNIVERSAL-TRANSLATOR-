@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Akki Events UI/UX Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    color: white;
+}
+
+/* Background video */
+#bg-video {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* Overlay */
+.overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,120,80,0.9));
+    min-height: 100vh;
+}
+
+/* Cards */
+.card {
+    background: rgba(0,0,0,0.6);
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px #22c55e;
+}
+
+/* Stars */
+.star {
+    cursor: pointer;
+    font-size: 25px;
+    color: gray;
+}
+
+.star.active {
+    color: gold;
+}
+
+/* Back button */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #22c55e;
+    padding: 10px 15px;
+    border-radius: 8px;
+    z-index: 100;
+    cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- VIDEO -->
+<video autoplay muted loop id="bg-video">
+<source src="https://www.w3schools.com/howto/rain.mp4">
+</video>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="flex items-center justify-center h-screen">
+<div class="bg-black/80 p-6 rounded w-96">
+
+<h2 class="text-2xl text-green-400 mb-4 text-center">Login</h2>
+
+<input id="name" placeholder="Full Name" class="text-black p-2 mb-2 w-full">
+<input id="phone" placeholder="Phone Number" class="text-black p-2 mb-2 w-full">
+<input id="email" placeholder="Email" class="text-black p-2 mb-2 w-full">
+<input id="password" type="password" placeholder="Password" class="text-black p-2 mb-2 w-full">
+
+<select class="text-black p-2 mb-2 w-full">
+<option>English</option>
+<option>Telugu</option>
+<option>Hindi</option>
+</select>
+
+<button onclick="login()" class="w-full bg-green-500 mt-2">Enter</button>
+<p id="loginError" class="text-red-400 text-sm mt-2"></p>
+
+</div>
+</div>
+
+<!-- MAIN PAGE -->
+<div id="mainPage" class="overlay p-6 hidden">
+
+<h1 class="text-4xl text-green-400 mb-6">Akki Event Management</h1>
+
+<h2 class="text-2xl mb-4">🎉 Events & Festivals</h2>
+
+<div id="events" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+<!-- DETAIL SECTION -->
+<div id="detail" class="hidden mt-6">
+
+<button onclick="back()" class="back-btn">⬅ Back</button>
+
+<h2 id="title" class="text-3xl mt-10"></h2>
+
+<img id="img" class="w-96 my-4">
+
+<video id="eventVideo" controls class="w-96 mb-4"></video>
+
+<p id="desc"></p>
+
+<h3 class="mt-3 text-green-300">Performers</h3>
+<p id="performers"></p>
+
+<h3 class="mt-4">⭐ Rating</h3>
+
+<div>
+<span class="star" onclick="rate(1)">★</span>
+<span class="star" onclick="rate(2)">★</span>
+<span class="star" onclick="rate(3)">★</span>
+<span class="star" onclick="rate(4)">★</span>
+<span class="star" onclick="rate(5)">★</span>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* LOGIN FUNCTION */
+function login() {
+    if (name.value=="" || phone.value=="" || email.value=="" || password.value=="") {
+        loginError.innerText = "Fill all fields";
+        return;
+    }
+    loginPage.style.display = "none";
+    mainPage.classList.remove("hidden");
+}
+
+/* EVENTS DATA */
+const data = [
+{title:"Wedding",img:"https://images.unsplash.com/photo-1511285560929-80b456fea0bc",video:"https://www.w3schools.com/html/mov_bbb.mp4",desc:"Traditional marriage",performers:"Classical dancers"},
+{title:"Baby Shower",img:"https://images.unsplash.com/photo-1519681393784-d120267933ba",video:"https://www.w3schools.com/html/movie.mp4",desc:"Baby celebration",performers:"Family"},
+{title:"Kitty Party",img:"https://images.unsplash.com/photo-1521334884684-d80222895322",video:"https://www.w3schools.com/html/mov_bbb.mp4",desc:"Fun party",performers:"Friends"},
+{title:"Dance Night",img:"https://images.unsplash.com/photo-1504609813442-a8924e83f76e",video:"https://www.w3schools.com/html/movie.mp4",desc:"Dance show",performers:"Aisha, Riya"},
+{title:"Concert",img:"https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",video:"https://www.w3schools.com/html/mov_bbb.mp4",desc:"Live music",performers:"Band"},
+{title:"DJ Party",img:"https://images.unsplash.com/photo-1497032205916-ac775f0649ae",video:"https://www.w3schools.com/html/movie.mp4",desc:"Night DJ",performers:"DJ Alex"},
+{title:"Onam",img:"https://images.unsplash.com/photo-1608889175290-1e1f0c4d0e0b",video:"https://www.w3schools.com/html/mov_bbb.mp4",desc:"Kerala festival",performers:"Folk dancers"},
+{title:"Pongal",img:"https://images.unsplash.com/photo-1617196035154-1aab4b63d315",video:"https://www.w3schools.com/html/movie.mp4",desc:"Harvest festival",performers:"Village dance"},
+{title:"Sankranti",img:"https://images.unsplash.com/photo-1576086213369-97a306d36557",video:"https://www.w3schools.com/html/mov_bbb.mp4",desc:"Kite festival",performers:"Cultural show"}
+];
+
+/* LOAD EVENTS */
+function loadEvents() {
+    data.forEach(e => {
+        let d = document.createElement("div");
+        d.className = "card";
+        d.innerHTML = `<img src="${e.img}" class="h-40 w-full"><h3>${e.title}</h3>`;
+        d.onclick = () => show(e);
+        events.appendChild(d);
+    });
+}
+
+/* SHOW DETAILS */
+function show(e) {
+    events.style.display = "none";
+    detail.classList.remove("hidden");
+    title.innerText = e.title;
+    img.src = e.img;
+    eventVideo.src = e.video;
+    desc.innerText = e.desc;
+    performers.innerText = e.performers;
+}
+
+/* BACK FUNCTION */
+function back() {
+    detail.classList.add("hidden");
+    events.style.display = "grid";
+    window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* RATING SYSTEM */
+function rate(n) {
+    let stars = document.querySelectorAll(".star");
+    stars.forEach((s,i) => s.classList.toggle("active", i < n));
+}
+
+/* INITIAL LOAD */
+loadEvents();
+
+</script>
+
+</body>
+</html>
